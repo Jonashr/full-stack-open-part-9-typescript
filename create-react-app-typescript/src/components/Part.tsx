@@ -18,15 +18,12 @@ const Part: React.FC<Part> = ({ part }) => {
     }
     case "Using props to pass data": {
       return <div>{ part.name} { part.exerciseCount} { part.groupProjectCount } </div>
-      break
     }
     case "Deeper type usage": {
       return <div>{ part.name} { part.exerciseCount} { part.description } { part.exerciseSubmissionLink } </div>
-      break;
     }
     case "Creating beautiful user interfaces": {
       return <div> { part.name } { part.exerciseCount} { part.description } { part.estimatedHours }</div>
-      break;
     }
     default: 
       return assertNever(part);

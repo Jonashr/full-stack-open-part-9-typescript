@@ -1,15 +1,12 @@
 import React  from "react";
 import { Patient, Entry } from '../types';
-import { useStateValue } from '../state';
+import EntryDetails from "./EntryDetails";
 
 interface Props {
   patient: Patient | undefined;
 }
 
 const PatientInfoPage: React.FC<Props> = ({ patient }) => {
-  const [{ diagnosis }, dispatch] = useStateValue();
-
-
   if(!patient) {
     return null;
   }
@@ -33,21 +30,12 @@ const PatientInfoPage: React.FC<Props> = ({ patient }) => {
 
       <h3>Entries</h3>
       { Object.values(entries).map((entry: Entry) => (
-          <div key={entry.id}>
-            <p>{entry.date} {entry.description}</p>
-
-            <ul>
-              {entry.diagnosisCodes?.map(code => {
-                return (diagnosis[code] !== undefined ?
-                  <li key={code}>{ diagnosis[code].code } {diagnosis[code].name }</li>
-
-                  :
-
-                  <li key={code}>{code}</li>
-                );
-              })}
-            </ul>
-          </div>
+        <>
+        <EntryDetails 
+          key={entry.id}
+          entry={entry}
+        />
+        </>
       ))
       }
     </div>
