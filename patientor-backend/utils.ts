@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { NewPatient, Gender, Entry, NewBaseEntry, Diagnosis, HealthCheckRating, Discharge } from './types';
+import { NewPatient, Gender, Entry, NewBaseEntry, Diagnosis, HealthCheckRating, Discharge, SickLeave, OccupationalHealthCareEntry } from './types';
 import * as uuid from 'uuid';
 
 const assertNever = (value: never): never => {
@@ -9,13 +9,13 @@ const assertNever = (value: never): never => {
   );
 };
 
-export const toNewPatient = (object: any): NewPatient => {
+export const toNewPatient = (patient: any): NewPatient => {
   return {
-    name: parseGenericString(object.name, 'name'),
-    dateOfBirth: parseDate(object.dateOfBirth, 'dateOfBirth'),
-    ssn: parseGenericString(object.ssn, 'ssn'),
-    gender: parseGender(object.gender),
-    occupation: parseGenericString(object.occupation, 'occupation'),
+    name: parseGenericString(patient.name, 'name'),
+    dateOfBirth: parseDate(patient.dateOfBirth, 'dateOfBirth'),
+    ssn: parseGenericString(patient.ssn, 'ssn'),
+    gender: parseGender(patient.gender),
+    occupation: parseGenericString(patient.occupation, 'occupation'),
     entries: []
   };
 
@@ -48,15 +48,17 @@ export const toNewEntry = (entry: any): Entry => {
       };
     }
     case "OccupationalHealthcare": {
-      return {
+      const occupationalHealthcare: OccupationalHealthCareEntry = {
         ...baseEntry,
         id: uuid.v4(),
-        employerName: parseGenericString(entry.employerName, 'employerName'),
-        sickLeave: {
-          startDate: parseDate(entry.sickLeave.startDate, 'sickLeave startDate'),
-          endDate: parseDate(entry.sickLeave.endDate, 'sickLeave endDate')
-        }
+        employerName: parseGenericString(entry.employerName, 'employerName')
       };
+      
+      if(entry.sickLeave) {
+        occupationalHealthcare.sickLeave = parseSickLeave(entry.sickLeave);
+      }
+
+      return occupationalHealthcare;
     }
     case "HealthCheck": {
       return {
@@ -107,7 +109,7 @@ const parseGender = (gender: any): Gender => {
 
 const parseHealthCheckRating = (healthCheckRating: any): HealthCheckRating => {
   if(!healthCheckRating || !isHealthCheckRating(healthCheckRating)) {
-    throw new Error(`Incorrect or missing value for healthCheckRating ${healthCheckRating as string}`);
+    throw new Error(`Incorrect or missing value for healthCheckRating`);
   }
   return healthCheckRating;
 };
@@ -120,6 +122,13 @@ const parseDischarge = (discharge: any): Discharge => {
   return {
     date: parseDate(discharge.date, 'discharge date'),
     criteria: parseGenericString(discharge.criteria, 'discharge criteria')
+  };
+};
+
+const parseSickLeave = (sickLeave: any): SickLeave => {
+  return {
+    startDate: parseDate(sickLeave.startDate, 'Sick leave startDate'),
+    endDate: parseDate(sickLeave.endDate, 'Sick leave endDate')
   };
 };
 
