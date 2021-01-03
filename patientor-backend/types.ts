@@ -29,25 +29,28 @@ export enum Gender {
 export interface BaseEntry {
   id: string;
   description: string;
+  type: string;
   date: string;
   specialist: string;
   diagnosisCodes?: Array<Diagnosis['code']>;
 }
 
+export type NewBaseEntry = Omit<BaseEntry, 'id'>;
+
+export interface HospitalEntry extends BaseEntry {
+  type: "Hospital";
+  discharge: Discharge;
+}
+
 export interface OccupationalHealthCareEntry extends BaseEntry {
-  type: "OccupationalHealthcare"
-  employerName: string
+  type: "OccupationalHealthcare";
+  employerName: string;
   sickLeave?: SickLeave;
 }
 
 export interface HealthCheckEntry extends BaseEntry {
   type: "HealthCheck";
   healthCheckRating: HealthCheckRating;
-}
-
-export interface HospitalEntry extends BaseEntry {
-  type: "Hospital";
-  discharge: Discharge;
 }
 
 export enum HealthCheckRating {
@@ -69,3 +72,7 @@ export type Discharge = {
 
 
 export type Entry = OccupationalHealthCareEntry | HospitalEntry | HealthCheckEntry;
+
+export type NewEntry = Omit<Entry, 'id'>;
+
+
